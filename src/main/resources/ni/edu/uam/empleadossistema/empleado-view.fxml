@@ -100,5 +100,7 @@
             <TableColumn fx:id="colEstado" prefWidth="68.0" text="Estado" />
         </columns>
       </TableView>
+      <Button fx:id="btnConsultar" layoutX="358.0" layoutY="516.0" mnemonicParsing="false" onAction="#realizarConsulta" text="Buscar" />
+      <ComboBox fx:id="cmbConsulta" layoutX="131.0" layoutY="517.0" prefHeight="32.0" prefWidth="212.0" promptText="Seleccione una consulta" />
    </children>
 </AnchorPane>

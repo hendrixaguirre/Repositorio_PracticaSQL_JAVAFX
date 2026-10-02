@@ -65,6 +65,8 @@ public class EmpleadoController {
     private TableColumn<Empleado, LocalDate> colFechaContratacion;
     @FXML
     private TableColumn<Empleado, String> colEstado;
+    @FXML
+    private ComboBox<String> cmbConsulta;
 
     private final ObservableList<Empleado> listaEmpleados = FXCollections.observableArrayList();
 
@@ -95,6 +97,8 @@ public class EmpleadoController {
         cmbDepartamento.getItems().addAll("Recursos Humanos", "Contabilidad", "Ventas", "Tecnología", "Marketing", "Otros");
         cmbEstado.getItems().clear();
         cmbEstado.getItems().addAll("Activo", "Inactivo");
+        cmbConsulta.getItems().clear();
+        cmbConsulta.getItems().addAll("Mostrar todos", "Empleados activos", "Ordenar por salario", "Ordenar por apellido");
     }
 
     @FXML
@@ -212,6 +216,54 @@ public class EmpleadoController {
         cmbEstado.getSelectionModel().clearSelection();
     }
 
+    @FXML
+    private void realizarConsulta() {
 
+        String consultaSeleccionada = cmbConsulta.getValue();
+        if (consultaSeleccionada == null) {
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", "Consulta no seleccionada", "Seleccione una consulta.");
+            return;
+        }
+        String sql = "";
+        switch (consultaSeleccionada) {
+            case "Mostrar todos":
+                sql = "SELECT * FROM empleado";
+                break;
+            case "Empleados activos":
+                sql = "SELECT * FROM empleado WHERE estado = 'Activo'";
+                break;
+            case "Ordenar por salario":
+                sql = "SELECT * FROM empleado ORDER BY salario DESC";
+                break;
+            case "Ordenar por apellido":
+                sql = "SELECT * FROM empleado ORDER BY apellidos ASC";
+                break;
+        }
+        listaEmpleados.clear();
 
+        try (
+                Connection connection = DatabaseConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql);
+                ResultSet resultSet = statement.executeQuery()
+        ) {
+            while (resultSet.next()) {
+                Empleado empleado = new Empleado();
+                empleado.setId(resultSet.getInt("id"));
+                empleado.setNombres(resultSet.getString("nombres"));
+                empleado.setApellidos(resultSet.getString("apellidos"));
+                empleado.setCedula(resultSet.getString("cedula"));
+                empleado.setCorreo(resultSet.getString("correo"));
+                empleado.setTelefono(resultSet.getString("telefono"));
+                empleado.setCargo(resultSet.getString("cargo"));
+                empleado.setDepartamento(resultSet.getString("departamento"));
+                empleado.setSalario(resultSet.getDouble("salario"));
+                empleado.setFechaContratacion(resultSet.getDate("fecha_contratacion").toLocalDate());
+                empleado.setEstado(resultSet.getString("estado"));
+                listaEmpleados.add(empleado);
+            }
+            tblEmpleados.setItems(listaEmpleados);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
 }
