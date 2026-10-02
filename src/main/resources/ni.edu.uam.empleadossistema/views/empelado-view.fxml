@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="780.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ni.edu.uam.empleadossistema.model.Empleado">
+   <children>
+      <GridPane layoutX="123.0" layoutY="117.0" prefHeight="300.0" prefWidth="655.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="228.0" minWidth="10.0" prefWidth="142.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="513.0" minWidth="10.0" prefWidth="513.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label text="Nombres">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label text="Apellidos" GridPane.rowIndex="1">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Label>
+            <Label text="Cedula" GridPane.rowIndex="2">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Label>
+            <Label text="Correo" GridPane.rowIndex="3">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Label>
+            <Label text="Telefono" GridPane.rowIndex="4">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Label>
+            <Label text="Cargo" GridPane.rowIndex="5">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Label>
+            <Label text="Departamento" GridPane.rowIndex="6">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Label>
+            <Label text="Salario" GridPane.rowIndex="7">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Label>
+            <Label text="Fecha de Contratacion" GridPane.rowIndex="8">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Label>
+            <Label text="Estado" GridPane.rowIndex="9">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Label>
+            <TextField fx:id="txtNombres" promptText="Ingrese el nombre" GridPane.columnIndex="1" />
+            <TextField fx:id="txtApellidos" promptText="Ingrese el apellido" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="txtCedula" promptText="Ingrese la cedula" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <TextField fx:id="txtCorreo" promptText="Ingrese el correo" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextField fx:id="txtTelefono" promptText="Ingrese el numero Telefonico" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <ComboBox fx:id="cmbEstado" prefHeight="25.0" prefWidth="190.0" promptText="Seleccione el estado" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+            <DatePicker fx:id="dpFechaContratacion" prefHeight="25.0" prefWidth="191.0" promptText="Seleccione fecha" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+            <TextField fx:id="txtSalario" promptText="Ingrese el salario" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <TextField fx:id="txtCargo" promptText="Ingrese el cargo" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <ComboBox fx:id="cmbDepartamento" prefHeight="25.0" prefWidth="194.0" promptText="Seleccione departamento" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+         </children>
+      </GridPane>
+      <Label alignment="CENTER" layoutX="328.0" layoutY="34.0" prefHeight="30.0" prefWidth="244.0" text="REGISTRO DE EMPLEADO" textAlignment="CENTER">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font></Label>
+      <Separator layoutY="89.0" prefHeight="5.0" prefWidth="900.0" />
+      <Button fx:id="btnGuardar" layoutX="484.0" layoutY="444.0" mnemonicParsing="false" onAction="#guardarEmpleado" prefHeight="30.0" prefWidth="75.0" text="Guardar" />
+      <Button fx:id="btnLimpiar" layoutX="574.0" layoutY="444.0" mnemonicParsing="false" onAction="#limpiarCampos" prefHeight="30.0" prefWidth="64.0" text="Limpiar" />
+      <Button fx:id="btnActualizarTabla" layoutX="651.0" layoutY="444.0" mnemonicParsing="false" onAction="#cargarEmpleados" prefHeight="30.0" prefWidth="105.0" text="Actualizar Tabla" />
+      <TableView fx:id="tblEmpleados" layoutX="19.0" layoutY="517.0" prefHeight="221.0" prefWidth="862.0">
+        <columns>
+          <TableColumn fx:id="colId" prefWidth="55.0" text="ID" />
+          <TableColumn fx:id="colNombres" prefWidth="78.0" text="Nombres" />
+            <TableColumn fx:id="colApellidos" prefWidth="85.0" text="Apellidos" />
+            <TableColumn fx:id="colCedula" prefWidth="82.0" text="Cedula" />
+            <TableColumn fx:id="colCorreo" prefWidth="77.0" text="Correo" />
+            <TableColumn fx:id="colTelefono" prefWidth="73.0" text="Telefono" />
+            <TableColumn fx:id="colCargo" prefWidth="69.0" text="Cargo" />
+            <TableColumn fx:id="colDepartamento" prefWidth="89.0" text="Departamento" />
+            <TableColumn fx:id="colSalario" prefWidth="67.0" text="Salario" />
+            <TableColumn fx:id="colFechaContratacion" prefWidth="118.0" text="Fecha Contratacion" />
+            <TableColumn fx:id="colEstado" prefWidth="68.0" text="Estado" />
+        </columns>
+      </TableView>
+   </children>
+</AnchorPane>
