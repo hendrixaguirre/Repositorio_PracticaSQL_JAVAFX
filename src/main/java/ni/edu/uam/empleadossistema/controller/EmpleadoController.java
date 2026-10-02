@@ -266,4 +266,9 @@ public class EmpleadoController {
             ex.printStackTrace();
         }
     }
+
+    @FXML
+    private void salirAplicacion() {
+        System.exit(0);
+    }
 }
