@@ -1,14 +1,23 @@
 package ni.edu.uam.empleadossistema.controller;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import ni.edu.uam.empleadossistema.database.DatabaseConnection;
+import ni.edu.uam.empleadossistema.model.Empleado;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 
 public class EmpleadoController {
@@ -83,7 +92,7 @@ public class EmpleadoController {
     //Método encargado de cargar datos por defecto del combobox
     private void configurarComboBox(){
         cmbDepartamento.getItems().clear();
-        cmbDepartamento.getItems().addAll("Recursos Humanos", "Contabilidad", "Ventas", "Tecnología", "Otros");
+        cmbDepartamento.getItems().addAll("Recursos Humanos", "Contabilidad", "Ventas", "Tecnología", "Marketing", "Otros");
         cmbEstado.getItems().clear();
         cmbEstado.getItems().addAll("Activo", "Inactivo");
     }
@@ -133,8 +142,8 @@ public class EmpleadoController {
             statement.setString(1, txtNombres.getText().trim());
             statement.setString(2, txtApellidos.getText().trim());
             statement.setString(3, txtCedula.getText().trim());
-            statement.setString(4, txtCorreo.getText().trim());
-            statement.setString(5, txtTelefono.getText().trim());
+            statement.setString(4, textoONulo(txtCorreo.getText()));
+            statement.setString(5, textoONulo(txtTelefono.getText()));
             statement.setString(6, txtCargo.getText().trim());
             statement.setString(7, cmbDepartamento.getValue());
             statement.setDouble(8, Double.parseDouble(txtSalario.getText().trim()));
@@ -147,7 +156,13 @@ public class EmpleadoController {
             cargarEmpleados();
         } catch (SQLException ex) {
             ex.printStackTrace();
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo guardar el empleado", ex.getMessage());
         }
+    }
+
+    private String textoONulo(String valor) {
+        String texto = valor == null ? "" : valor.trim();
+        return texto.isEmpty() ? null : texto;
     }
 
     private void mostrarAlerta(Alert.AlertType tipo, String titulo, String encabezado, String mensaje) {
@@ -162,16 +177,22 @@ public class EmpleadoController {
         String nombres = txtNombres.getText().trim();
         String apellidos = txtApellidos.getText().trim();
         String cedula = txtCedula.getText().trim();
+        String cargo = txtCargo.getText().trim();
         String salario = txtSalario.getText().trim();
 
-        if (nombres.isEmpty() || apellidos.isEmpty() || cedula.isEmpty() || cmbDepartamento.getValue() == null || salario.isEmpty() || dpFechaContratacion.getValue() == null || cmbEstado.getValue() == null) {
+        if (nombres.isEmpty() || apellidos.isEmpty() || cedula.isEmpty() || cargo.isEmpty() || cmbDepartamento.getValue() == null || salario.isEmpty() || dpFechaContratacion.getValue() == null || cmbEstado.getValue() == null) {
             mostrarAlerta(Alert.AlertType.ERROR, "Error", "Campos incompletos", "Por favor, complete los campos requeridos.");
             return false;
         }
+        double salarioNumerico;
         try {
-            Double.parseDouble(salario);
+            salarioNumerico = Double.parseDouble(salario);
         } catch (NumberFormatException ex) {
             mostrarAlerta(Alert.AlertType.ERROR, "Error", "Salario inválido", "El salario debe ser un valor numérico.");
+            return false;
+        }
+        if (salarioNumerico < 0) {
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", "Salario inválido", "El salario no puede ser negativo.");
             return false;
         }
         return true;
