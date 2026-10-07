@@ -3,12 +3,7 @@ package ni.edu.uam.empleadossistema.controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import ni.edu.uam.empleadossistema.database.DatabaseConnection;
 import ni.edu.uam.empleadossistema.model.Empleado;
@@ -75,6 +70,27 @@ public class EmpleadoController {
         configurarTabla();
         configurarComboBox();
         cargarEmpleados();
+
+        //Cada vez que se selecciona una fila del TableView, obtenemos ese objeto
+        tblEmpleados.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                cargarEmpleadoSeleccionado(newValue);
+            }
+        });
+    }
+
+    //Encargado de mapear los datos en los TextFields
+    private void cargarEmpleadoSeleccionado(Empleado empleado){
+        txtNombres.setText(empleado.getNombres());
+        txtApellidos.setText(empleado.getApellidos());
+        txtCedula.setText(empleado.getCedula());
+        txtCorreo.setText(empleado.getCorreo());
+        txtTelefono.setText(empleado.getTelefono());
+        txtCargo.setText(empleado.getCargo());
+        cmbDepartamento.setValue(empleado.getDepartamento());
+        txtSalario.setText(String.valueOf(empleado.getSalario()));
+        dpFechaContratacion.setValue(empleado.getFechaContratacion());
+        cmbEstado.setValue(empleado.getEstado());
     }
 
     private void configurarTabla() {
@@ -271,4 +287,86 @@ public class EmpleadoController {
     private void salirAplicacion() {
         System.exit(0);
     }
+
+    @FXML
+    private void eliminarEmpleado(){
+        Empleado empleadoSeleccionado = tblEmpleados.getSelectionModel().getSelectedItem();
+        if(empleadoSeleccionado == null){
+            mostrarAlerta(Alert.AlertType.WARNING, "Selección requerida", "No hay empleado seleccionado", "Seleccione un empleado de la lista");
+            return;
+        }
+        if (!validarCampos()){
+            return;
+        }
+
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Confirmación");
+        confirmacion.setHeaderText(null);
+        confirmacion.setContentText("¿Está seguro que desea eliminar el registro de empleado?");
+        if (confirmacion.showAndWait().isEmpty() || confirmacion.getResult() == ButtonType.OK){
+            return;
+        }
+        // Elminicación física - borrar la fila de la tabla
+        String sql = "DELETE FROM empleado WHERE id =?";
+
+        try(
+                Connection connection = DatabaseConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql);
+        ){
+            statement.setInt(1, empleadoSeleccionado.getId());
+
+            int filasEliminadas = statement.executeUpdate();
+            if (filasEliminadas > 0){
+                mostrarAlerta(Alert.AlertType.INFORMATION, "Registro eliminado", "Eliminación completada", "El libro fue eliminado exitosamente");
+                limpiarCampos();
+                cargarEmpleados();
+            }
+        }catch (SQLException ex){
+            ex.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void actualizarEmpleado(){
+        Empleado empleadoSeleccionado = tblEmpleados.getSelectionModel().getSelectedItem();
+        if(empleadoSeleccionado == null){
+            mostrarAlerta(Alert.AlertType.WARNING, "Selección requerida", "No hay un empleado seleccionado", "Seleccione un empleado de la lista");
+            return;
+        }
+        if(!validarCampos()){
+            return;
+        }
+
+        String sql = "UPDATE empleado SET nombres = ?, apellidos = ?, cedula = ?, correo = ?, telefono = ?, cargo = ?, departamento = ?, salario = ?, fecha_contratacion = ?, estado = ? WHERE id = ?";
+
+        try(
+                Connection connection = DatabaseConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql);
+        ){
+            statement.setString(1, txtNombres.getText());
+            statement.setString(2, txtApellidos.getText());
+            statement.setString(3, txtCedula.getText());
+            statement.setString(4, txtCorreo.getText());
+            statement.setString(5, txtTelefono.getText());
+            statement.setString(6, txtCargo.getText());
+            statement.setString(7, cmbDepartamento.getValue());
+            statement.setDouble(8, Double.parseDouble(txtSalario.getText()));
+            statement.setDate(9, Date.valueOf(dpFechaContratacion.getValue()));
+            statement.setString(10, cmbEstado.getValue());
+            statement.setInt(11, empleadoSeleccionado.getId());
+
+            int filasActualizadas = statement.executeUpdate();
+            if (filasActualizadas > 0){
+                mostrarAlerta(Alert.AlertType.INFORMATION, "Registro actualizado", "Actualización completada", "El empleado fue actualizado correctamente");
+                limpiarCampos();
+                cargarEmpleados();
+            }
+
+        }catch (SQLException ex){
+            ex.printStackTrace();
+        }
+    }
+
+
+
 }

@@ -103,5 +103,7 @@
       <Button fx:id="btnConsultar" layoutX="358.0" layoutY="516.0" mnemonicParsing="false" text="Buscar" />
       <ComboBox fx:id="cmbConsulta" layoutX="131.0" layoutY="517.0" prefHeight="32.0" prefWidth="212.0" promptText="Seleccione una consulta" />
       <Button fx:id="btnSalir" layoutX="807.0" layoutY="516.0" mnemonicParsing="false" onAction="#salirAplicacion" text="SALIR" />
+      <Button fx:id="btnActualizarEmpleado" layoutX="625.0" layoutY="473.0" mnemonicParsing="false" onAction="#actualizarEmpleado" text="Actualizar Registro" />
+      <Button fx:id="btnEliminarEmpleado" layoutX="792.0" layoutY="472.0" mnemonicParsing="false" onAction="#eliminarEmpleado" text="Eliminar" />
    </children>
 </AnchorPane>
