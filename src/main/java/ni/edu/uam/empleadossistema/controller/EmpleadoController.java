@@ -289,39 +289,51 @@ public class EmpleadoController {
     }
 
     @FXML
-    private void eliminarEmpleado(){
+    private void eliminarEmpleado() {
         Empleado empleadoSeleccionado = tblEmpleados.getSelectionModel().getSelectedItem();
-        if(empleadoSeleccionado == null){
-            mostrarAlerta(Alert.AlertType.WARNING, "Selección requerida", "No hay empleado seleccionado", "Seleccione un empleado de la lista");
-            return;
-        }
-        if (!validarCampos()){
-            return;
-        }
 
+        if (empleadoSeleccionado == null) {
+            mostrarAlerta(
+                    Alert.AlertType.WARNING,
+                    "Selección requerida",
+                    "No hay empleado seleccionado",
+                    "Seleccione un empleado de la lista"
+            );
+            return;
+        }
         Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
         confirmacion.setTitle("Confirmación");
         confirmacion.setHeaderText(null);
-        confirmacion.setContentText("¿Está seguro que desea eliminar el registro de empleado?");
-        if (confirmacion.showAndWait().isEmpty() || confirmacion.getResult() == ButtonType.OK){
+        confirmacion.setContentText(
+                "¿Está seguro que desea eliminar el registro del empleado?"
+        );
+
+        if (confirmacion.showAndWait().isEmpty() || confirmacion.getResult() != ButtonType.OK) {
             return;
         }
-        // Elminicación física - borrar la fila de la tabla
-        String sql = "DELETE FROM empleado WHERE id =?";
 
-        try(
+        String sql = "DELETE FROM empleado WHERE id = ?";
+
+        try (
                 Connection connection = DatabaseConnection.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql);
-        ){
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
             statement.setInt(1, empleadoSeleccionado.getId());
 
             int filasEliminadas = statement.executeUpdate();
-            if (filasEliminadas > 0){
-                mostrarAlerta(Alert.AlertType.INFORMATION, "Registro eliminado", "Eliminación completada", "El libro fue eliminado exitosamente");
+
+            if (filasEliminadas > 0) {
+                mostrarAlerta(
+                        Alert.AlertType.INFORMATION,
+                        "Registro eliminado",
+                        "Eliminación completada",
+                        "El empleado fue eliminado exitosamente"
+                );
                 limpiarCampos();
                 cargarEmpleados();
             }
-        }catch (SQLException ex){
+
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
     }
